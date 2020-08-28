@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>New Article</h1>
+    <h1>{{mode}}</h1>
     <!-- add a submit listener on the form, when the form submits, vue will handle it with the specified method 'checkForm', it will also suppress the default submit behaviour of a form (sending a request and reloading the page) -->
     <form v-on:submit.prevent="checkForm">
       <div class="errors">
@@ -52,8 +52,9 @@
 <script>
 export default {
   name: "EditArticle",
-  data: function () {
+  data: function() {
     return {
+      mode: "New",
       editing: false,
       // this is where the errors are put if they are detected by the checkForm method
       errors: [],
@@ -61,13 +62,14 @@ export default {
       article: {
         title: null,
         description: null,
-        body: null,
-      },
+        body: null
+      }
     };
   },
   methods: {
     //this method uses an if statement to determing if the data entered in the form is valid, and then checks which action to take based on the mode of the component
-    checkForm: function () {
+    checkForm: function() {
+      this.errors = [];
       if (this.article.title && this.article.description && this.article.body) {
         // if the mode is edit, then the edit method is called
         if (this.editing) {
@@ -91,11 +93,11 @@ export default {
 
     // this function sends a post request to the api, and includes an article object as its payload
     // the api will interpret this as a request to create a new article entry in the database
-    createArticle: function (article) {
+    createArticle: function(article) {
       console.log(article);
       this.$http
         .post(`${process.env.VUE_APP_API_URL}articles`, article)
-        .then(function () {
+        .then(function() {
           // upon receiving confirmation from the api, it then commands the vue router to go to the home view
           this.$router.push({ path: "/" });
         });
@@ -103,33 +105,34 @@ export default {
 
     // this function sends a put request to the api, and includes an article object as its payload
     // the api will interpret this as a request to edit an existing entry
-    editArticle: function (article) {
+    editArticle: function(article) {
       this.$http
-        .put(`${process.env.VUE_APP_API_URL}articles/${article.id}`, article)
-        .then(function () {
+        .put(`${process.env.VUE_APP_API_URL}articles/${article._id}`, article)
+        .then(function() {
           // upon receiving confirmation from the api, it then commands the vue router to go to the home view
           this.$router.push({ path: "/" });
         });
-    },
+    }
   },
 
   // this lifecycle hook runs when the component is created, and decides if it should be in editing mode or not by checking for the presence of a parameter (the article id) in the path that was used to access this component
-  created: function () {
+  created: function() {
     if (this.$route.params.articleId) {
       // id there is one, it sets editing mode to true, because it means that an edit article link was clicked, which sends through the id of the article as a parameter
       this.editing = true;
+      this.mode = "Edit";
       // it then sends a get request to the api to retreive the article that owns the id passed through
       this.$http
         .get(
           `${process.env.VUE_APP_API_URL}articles/${this.$route.params.articleId}`
         )
-        .then(function (data) {
+        .then(function(data) {
           // and when the article is received, it is loaded into the article object stored in this components' data object, which is bound to the template and therefore automatically fills out the form
-          this.article = data.body.article;
+          this.article = data.body;
         });
     }
     // otherwise if no param is present, it must mean that the 'new article' link was clicked, and therefore the editing mode stays false, and no article is retreived, the form stays blank and no requests are sent until the user has properly filled out the form and submitted, which is handled elsewhere, in the checkForm method
-  },
+  }
 };
 </script>
 
