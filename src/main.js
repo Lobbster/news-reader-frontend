@@ -27,21 +27,20 @@ const routes = [
   },
   {
     name: "details",
-    path: "/articles/:articleId/details",
+
+    path: "/article/:articleId/details",
     component: ArticleDetails,
   },
   {
     name: "edit",
-    path: "/articles/:articleId?/edit",
+    path: "/article/:articleId?/edit",
     component: EditArticle,
   },
   {
-    name: "register",
     path: "/register",
     component: Register,
   },
   {
-    name: "login",
     path: "/login",
     component: Login,
   },
@@ -49,7 +48,7 @@ const routes = [
 
 const router = new VueRouter({
   routes: routes,
-  mode: "hash",
+  mode: "history",
 });
 
 Vue.config.productionTip = false;

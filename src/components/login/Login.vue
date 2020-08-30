@@ -1,24 +1,23 @@
 <template>
   <div>
-    <h2>Login</h2>
-    <form @submit.prevent="checkForm">
+    <h1>Register User</h1>
+
+    <form v-on:submit.prevent="checkForm">
+      <!-- error display -->
       <div v-if="errors.length">
         <p>
-          <b>PLEASE CORRECT THE FOLLOWING ERRORS:</b>
+          <b>Please correct the following</b>
         </p>
-        <ul>
-          <li v-for="(error, index) in errors" :key="index">{{errors}}</li>
+        <ul v-for="(error, index) in errors" v-bind:key="index">
+          <li>{{error}}</li>
         </ul>
       </div>
-
       <div>
-        <div>
-          <label for="email">Email</label>
-          <input v-model="user.email" type="email" id="email" name="email" />
-        </div>
-        <div>
-          <input type="submit" value="Register" />
-        </div>
+        <label for="email">Email</label>
+        <input v-model="user.email" type="text" name="email" id="email" />
+      </div>
+      <div>
+        <input type="submit" value="Log In" />
       </div>
     </form>
   </div>
@@ -27,13 +26,12 @@
 <script>
 import EventBus from "../../eventBus.js";
 export default {
-  name: "Login",
   data: function() {
     return {
-      errors: [],
       user: {
         email: ""
-      }
+      },
+      errors: []
     };
   },
   methods: {
@@ -41,28 +39,30 @@ export default {
       event.preventDefault();
       this.errors = [];
       if (!this.user.email) {
-        this.errors.push("Email Required");
+        this.errors.push("Email required");
       }
-
       if (!this.errors.length) {
         this.loginUser(this.user);
       }
-    }
-  },
-  loginUser: function(user) {
-    this.$http.post(`${process.env.VUE_APP_API_URL}users/login`, user).then(
-      response => {
-        if (response.body.email) {
-          localStorage.loggedIn = "yes";
-          localStorage.userEmail = response.body.email;
-          EventBus.$emit("$loggedIn");
-          this.$router.push({ path: "/" });
+    },
+    loginUser(user) {
+      this.$http.post(`${process.env.VUE_APP_API_URL}users/login`, user).then(
+        function(response) {
+          if (response.body.email) {
+            localStorage.loggedIn = "yes";
+            localStorage.userEmail = user.email;
+            localStorage.userId = response.body._id;
+            //emit event for App to recieve
+            EventBus.$emit("$loggedIn");
+            this.$router.push({ path: "/" });
+          }
+        },
+        function(response) {
+          //error callback
+          this.errors.push(response.body);
         }
-      },
-      () => {
-        console.log(response);
-      }
-    );
+      );
+    }
   }
 };
 </script>

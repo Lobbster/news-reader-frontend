@@ -2,15 +2,16 @@
   <header>
     <h3>Header</h3>
     <router-link v-bind:to="'/'">Home</router-link>
-    <router-link v-bind:to="'/about'">....About</router-link>
-    <router-link v-bind:to="'/register'">....Register</router-link>
-    <router-link v-bind:to="'/login'">....LogIn</router-link>
-    <a v-if="loggedIn === `yes`" @click.prevent="setLoggedOut" href>LogOut</a>
+    <router-link v-bind:to="'/about'">About</router-link>
+    <a v-if="loggedIn === 'yes'" @click.prevent="setLoggedOut" href>Log Out</a>
+    <router-link v-else v-bind:to="'/login'">Log In</router-link>
+    <router-link v-bind:to="'/register'">Register</router-link>
+    <h5 v-if="loggedIn === 'yes'">Hello: {{userEmail}}</h5>
   </header>
 </template>
 
 <script>
-import EventBus from "../eventBus.js";
+import EventBus from "../eventBus";
 export default {
   name: "MyHeader",
   data: function() {
@@ -20,13 +21,11 @@ export default {
     };
   },
   methods: {
-    setLoggedout: function() {
-      if (response.body.email) {
-        localStorage.loggedIn = "no";
-        localStorage.userEmail = null;
-        EventBus.$emit("$loggedIn");
-        this.$router.push({ path: "/login" });
-      }
+    setLoggedOut: function() {
+      localStorage.loggedIn = "no";
+      localStorage.userEmail = "";
+      EventBus.$emit("$loggedIn");
+      this.$router.push({ path: "/login" });
     },
     setLoggedIn: function() {
       this.loggedIn = localStorage.loggedIn;
@@ -34,9 +33,9 @@ export default {
     }
   },
   mounted() {
-    this.loggedIn = localStorage.loggedIn;
-    this.userEmail = localStorage.userEmail;
-    EventBus.$on("$userLogged", this.setLoggedIn);
+    this.loggedIn = localStorage.getItem("loggedIn");
+    this.userEmail = localStorage.getItem("userEmail");
+    EventBus.$on("$loggedIn", this.setLoggedIn);
   }
 };
 </script>
