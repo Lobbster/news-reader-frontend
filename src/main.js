@@ -7,6 +7,7 @@ import ArticleDetails from "./components/article-details/ArticleDetails.vue";
 import EditArticle from "./components/edit-article/EditArticle";
 import Register from "./components/register/Register.vue";
 import Login from "./components/login/Login.vue";
+import Author from "./components/author-articles/Author.vue";
 
 import VueResource from "vue-resource";
 
@@ -35,6 +36,11 @@ const routes = [
     name: "edit",
     path: "/article/:articleId?/edit",
     component: EditArticle,
+  },
+  {
+    name: "author",
+    path: "/article/:articleId?/author",
+    component: Author,
   },
   {
     path: "/register",

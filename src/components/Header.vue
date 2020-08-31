@@ -3,6 +3,7 @@
     <h3>Header</h3>
     <router-link v-bind:to="'/'">Home</router-link>
     <router-link v-bind:to="'/about'">About</router-link>
+    <router-link v-if="loggedIn === `yes`" v-bind:to="{name: 'author'}">MyArticles</router-link>
     <a v-if="loggedIn === 'yes'" @click.prevent="setLoggedOut" href>Log Out</a>
     <router-link v-else v-bind:to="'/login'">Log In</router-link>
     <router-link v-bind:to="'/register'">Register</router-link>
