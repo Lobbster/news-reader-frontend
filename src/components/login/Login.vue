@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Register User</h1>
+    <h1>Log In</h1>
 
     <form v-on:submit.prevent="checkForm">
       <!-- error display -->
